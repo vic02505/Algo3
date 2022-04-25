@@ -16,5 +16,5 @@
 
 ### Con lo que vimos en la clase del Jueves (en la parte teórica, prototipos vs clases) ¿cómo sacarían este código? Sobre la implementación ¿cómo resolvieron guardar los huevos? ¿Usaron colecciones? ¿Diccionarios? ¿Uno, varios? ¿con qué indexaban? Pero la pregunta más importante: ¿es lo más sencillo que hacía falta? ¿o se podía hacer menos y todo andaba?
 
-    -El como guardar los huevos se resolvió haciendo uso de colaboradores internos, para manener en el tiempo la cantidad de huevos.
+    -El como guardar los huevos se resolvió haciendo uso de colaboradores internos, para mantener en el tiempo la cantidad de huevos.
     -La implementación se hizo sin hacer uso de diccionarios y colecciones. No se hizo uso de diccionarios ni de colecciones, por lo que haciendo uso de menos "estructuras de datos" se logró representar el problemas. 
