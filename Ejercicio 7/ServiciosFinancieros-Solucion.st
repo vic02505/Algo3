@@ -70,7 +70,7 @@ test03AnInstanceOfAccountReportCanGiveTheAccountSummaryOfAnAccountWithDepositsAn
 	self assert: (summaryReportOfanAccount accountSummaryReport) equals: 'a Deposit for: 100 * pesos;a Deposit for: 600 * pesos;a Withdraw for: 100 * pesos;Balance = 600 * pesos'. 
 	 ! !
 
-!AccountReportTest methodsFor: 'Receptive account report' stamp: 'Vic 6/16/2022 13:10:06'!
+!AccountReportTest methodsFor: 'Receptive account report' stamp: 'Vic 6/16/2022 13:45:23'!
 test04AnInstanceOfAccountReportCanGiveTheAccountSummaryOfAnAccountWithTransferences
 
 	Deposit register: 10 * peso on: originAccount.
@@ -757,29 +757,26 @@ Object subclass: #AccountSummaryReport
 	poolDictionaries: ''
 	category: 'ServiciosFinancieros-Solucion'!
 
-!AccountSummaryReport methodsFor: 'Main protocol' stamp: 'Vic 6/16/2022 12:55:45'!
+!AccountSummaryReport methodsFor: 'Main protocol' stamp: 'Vic 6/16/2022 14:03:34'!
 accountSummaryReport
 	
 	self resetAccountAbstract. 
 		 
-	account transactions do: [:anAccountTransaction|
-		self addTransactionsToAccountSummaryReport: anAccountTransaction.
-		self addSeparatorToAccountSummaryReport.
-		].
+	account transactions do: [:anAccountTransaction| anAccountTransaction reportOf: self].
 	
 	self addBalanceToAccountSummaryReport: account balance. 
 	
 	^accountSumaryReport copy.! !
 
 
-!AccountSummaryReport methodsFor: 'Reset' stamp: 'Vic 6/15/2022 16:04:03'!
+!AccountSummaryReport methodsFor: 'Private-Reset' stamp: 'Vic 6/15/2022 16:04:03'!
 resetAccountAbstract
 
 	accountSumaryReport := ''. 
 	! !
 
 
-!AccountSummaryReport methodsFor: 'Message creator' stamp: 'Vic 6/15/2022 16:02:25'!
+!AccountSummaryReport methodsFor: 'Private-Message creator' stamp: 'Vic 6/15/2022 16:02:25'!
 addBalanceToAccountSummaryReport: anAccountBalance
 
 	accountSumaryReport  := accountSumaryReport  append: 'Balance = '.
@@ -787,39 +784,42 @@ addBalanceToAccountSummaryReport: anAccountBalance
 	(anAccountBalance = 0) ifTrue:[(accountSumaryReport  := accountSumaryReport append: '0 * pesos')].
 	(anAccountBalance > 0) ifTrue: [accountSumaryReport := accountSumaryReport append: (anAccountBalance asString)].! !
 
-!AccountSummaryReport methodsFor: 'Message creator' stamp: 'Vic 6/15/2022 16:02:40'!
+!AccountSummaryReport methodsFor: 'Private-Message creator' stamp: 'Vic 6/15/2022 16:02:40'!
 addSeparatorToAccountSummaryReport
 	
 	accountSumaryReport := accountSumaryReport append: ';'.! !
 
-!AccountSummaryReport methodsFor: 'Message creator' stamp: 'Vic 6/15/2022 16:02:54'!
-addTransactionValueToAccountSummaryReport: anAccountTransaction
-	
-	accountSumaryReport := accountSumaryReport append: ' for: '.
-	accountSumaryReport := accountSumaryReport append: anAccountTransaction value asString.! !
 
-!AccountSummaryReport methodsFor: 'Message creator' stamp: 'Vic 6/15/2022 16:03:15'!
-addTransactionsToAccountSummaryReport: anAccountTransaction
-
-	(anAccountTransaction class = TransferDepositLeg) ifTrue: [
-		accountSumaryReport := accountSumaryReport append: 'a Deposit by transference'
-		].
-	(anAccountTransaction class = TransferWithdrawLeg) ifTrue: [
-		accountSumaryReport  := accountSumaryReport append: 'a Withdraw by transference'
-		].
-	(anAccountTransaction class =  Deposit or: anAccountTransaction class = Withdraw) ifTrue: [
-		accountSumaryReport := accountSumaryReport append: anAccountTransaction asString.
-		].
-	
-	self addTransactionValueToAccountSummaryReport: anAccountTransaction.
-	! !
-
-
-!AccountSummaryReport methodsFor: 'initialize' stamp: 'Vic 6/16/2022 12:47:06'!
+!AccountSummaryReport methodsFor: 'Private-Initialize' stamp: 'Vic 6/16/2022 12:47:06'!
 initializeWith: anAccount
 
 	account := anAccount 
 ! !
+
+
+!AccountSummaryReport methodsFor: 'Private' stamp: 'Vic 6/16/2022 13:59:33'!
+addDeposit: aDeposit
+
+	accountSumaryReport := accountSumaryReport append: 'a Deposit for: ', aDeposit value asString. 
+	self addSeparatorToAccountSummaryReport. ! !
+
+!AccountSummaryReport methodsFor: 'Private' stamp: 'Vic 6/16/2022 14:00:02'!
+addDepositLeg: aDepositLeg
+
+	accountSumaryReport := accountSumaryReport append: 'a Deposit by transference for: ', aDepositLeg value asString.
+	self addSeparatorToAccountSummaryReport.  ! !
+
+!AccountSummaryReport methodsFor: 'Private' stamp: 'Vic 6/16/2022 14:00:36'!
+addWithdraw: aWithdraw
+
+	accountSumaryReport := accountSumaryReport append: 'a Withdraw for: ', aWithdraw value asString. 
+	self addSeparatorToAccountSummaryReport. ! !
+
+!AccountSummaryReport methodsFor: 'Private' stamp: 'Vic 6/16/2022 14:00:17'!
+addWithdrawLeg: aWithdrawLeg
+
+	accountSumaryReport := accountSumaryReport append: 'a Withdraw by transference for: ', aWithdrawLeg value asString. 
+	self addSeparatorToAccountSummaryReport. ! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
@@ -871,6 +871,12 @@ value
 	^ value! !
 
 
+!Deposit methodsFor: 'Private' stamp: 'Vic 6/16/2022 13:59:34'!
+reportOf: aReport
+	
+	aReport addDeposit: self. ! !
+
+
 !Deposit methodsFor: 'balance' stamp: 'HAW 5/25/2019 11:25:02'!
 affectBalance: aBalance
 
@@ -917,6 +923,12 @@ initializeWith: aTransfer
 
 	transfer := aTransfer! !
 
+
+!TransferLeg methodsFor: 'Private' stamp: 'Vic 6/16/2022 14:15:32'!
+reportOf: aReport
+	
+	self subclassResponsibility. ! !
+
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
 !classDefinition: 'TransferLeg class' category: 'ServiciosFinancieros-Solucion'!
@@ -952,6 +964,12 @@ affectBalance: aBalance
 
 	^aBalance + self value! !
 
+
+!TransferDepositLeg methodsFor: 'Private' stamp: 'Vic 6/16/2022 14:15:53'!
+reportOf: aReport
+	
+	aReport addDepositLeg: self. ! !
+
 
 !classDefinition: #TransferWithdrawLeg category: 'ServiciosFinancieros-Solucion'!
 TransferLeg subclass: #TransferWithdrawLeg
@@ -964,6 +982,12 @@ TransferLeg subclass: #TransferWithdrawLeg
 depositLeg
 
 	^transfer depositLeg! !
+
+
+!TransferWithdrawLeg methodsFor: 'Private' stamp: 'Vic 6/16/2022 14:16:08'!
+reportOf: aReport
+	
+	aReport addWithdrawLeg: self. ! !
 
 
 !TransferWithdrawLeg methodsFor: 'balance' stamp: 'LL 9/20/2020 22:27:55'!
@@ -995,6 +1019,12 @@ value
 affectBalance: aBalance
 
 	^aBalance - value! !
+
+
+!Withdraw methodsFor: 'Private' stamp: 'Vic 6/16/2022 14:16:36'!
+reportOf: aReport
+	
+	aReport addWithdraw: self. ! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
@@ -1032,19 +1062,12 @@ resetTransferNetReport
 	transferNetReport := 0*peso.! !
 
 
-!AccountTransferNetReport methodsFor: 'Main protocol' stamp: 'Vic 6/16/2022 12:56:16'!
+!AccountTransferNetReport methodsFor: 'Main protocol' stamp: 'Vic 6/16/2022 14:11:18'!
 accountTransferNetReport
 
 	self resetTransferNetReport. 
 	
-	account transactions do: [:anAccountTrasancation|
-		
-		(anAccountTrasancation class = TransferDepositLeg) ifTrue: 
-			[transferNetReport := transferNetReport + (anAccountTrasancation value)].
-		(anAccountTrasancation  class = TransferWithdrawLeg) ifTrue: 
-			[transferNetReport := transferNetReport - (anAccountTrasancation  value)].
-	
-		].
+	account transactions do: [:anAccountTrasancation|anAccountTrasancation reportOf: self].
 	
 	^transferNetReport copy.! !
 
@@ -1054,6 +1077,32 @@ initializeWith: anAccount
 	
 	account := anAccount. 
 	! !
+
+
+!AccountTransferNetReport methodsFor: 'Private' stamp: 'Vic 6/16/2022 13:59:33'!
+addDeposit: aDeposit
+	
+	
+
+	! !
+
+!AccountTransferNetReport methodsFor: 'Private' stamp: 'Vic 6/16/2022 14:00:02'!
+addDepositLeg: aDeposit
+
+	transferNetReport := transferNetReport  + aDeposit value.
+	
+	
+
+	! !
+
+!AccountTransferNetReport methodsFor: 'Private' stamp: 'Vic 6/16/2022 14:00:36'!
+addWithdraw: aWithdraw
+	! !
+
+!AccountTransferNetReport methodsFor: 'Private' stamp: 'Vic 6/16/2022 14:00:17'!
+addWithdrawLeg: aWithdraw
+	
+	transferNetReport := transferNetReport - aWithdraw value.! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
