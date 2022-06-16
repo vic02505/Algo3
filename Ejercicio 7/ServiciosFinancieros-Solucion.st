@@ -1,16 +1,16 @@
 !classDefinition: #AccountReportTest category: 'ServiciosFinancieros-Solucion'!
 TestCase subclass: #AccountReportTest
-	instanceVariableNames: 'anAccount anPortfolio accountReport'
+	instanceVariableNames: 'anAccount anPortfolio originAccount destinationAccount transferNetOfAnAccount transferNetOfDestinationAccount transferNetOfAnPortfolio summaryReportOfDestinationAccount summaryReportOfAnPortfolio summaryReportOfanAccount'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'ServiciosFinancieros-Solucion'!
 
-!AccountReportTest methodsFor: 'Portfolio report test' stamp: 'Vic 6/15/2022 16:05:55'!
+!AccountReportTest methodsFor: 'Portfolio report test' stamp: 'Vic 6/16/2022 13:03:07'!
 test01AnInstanceOfAccountReportCanGiveTheAccountSummaryOfAnEmptyPortfolio
 	
-	self assert: (accountReport accountSummaryReportOf: anPortfolio) equals: 'Balance = 0 * pesos'.! !
+	self assert: (summaryReportOfAnPortfolio accountSummaryReport) equals: 'Balance = 0 * pesos'.! !
 
-!AccountReportTest methodsFor: 'Portfolio report test' stamp: 'Vic 6/15/2022 16:07:00'!
+!AccountReportTest methodsFor: 'Portfolio report test' stamp: 'Vic 6/16/2022 13:03:43'!
 test02AnInstanceOfAccountReportCanGiveTheAccountSummaryOfAPortfolioWith2DepositsAnd1Withdraw
 		
 	Deposit register: 100 * peso on: anAccount.
@@ -18,106 +18,95 @@ test02AnInstanceOfAccountReportCanGiveTheAccountSummaryOfAPortfolioWith2Deposits
 	Withdraw register: 100 * peso on: anAccount.
 	
 	anPortfolio add: anAccount.
-	
-	self assert: (accountReport accountSummaryReportOf: anPortfolio) equals: 'a Deposit for: 100 * pesos;a Deposit for: 600 * pesos;a Withdraw for: 100 * pesos;Balance = 600 * pesos'. 
+		
+	self assert: (summaryReportOfAnPortfolio accountSummaryReport) equals: 'a Deposit for: 100 * pesos;a Deposit for: 600 * pesos;a Withdraw for: 100 * pesos;Balance = 600 * pesos'. 
 	! !
 
-!AccountReportTest methodsFor: 'Portfolio report test' stamp: 'Vic 6/15/2022 16:07:54'!
+!AccountReportTest methodsFor: 'Portfolio report test' stamp: 'Vic 6/16/2022 13:09:31'!
 test03AnInstanceOfAccountReportCanGiveTheAccountSummaryOfAPortfolioWithTransferences
-	
-	| destinationAccount originAccount |
-	
-	originAccount := ReceptiveAccount new.
+		
 	Deposit register: 10 * peso on: originAccount.
-	
-	destinationAccount := ReceptiveAccount new.
 	Deposit register: 10 * peso on: destinationAccount.
 	
 	Transfer amount: 2 * peso from: originAccount to: destinationAccount.
 	
 	anPortfolio add: destinationAccount. 
 	
-	self assert: (accountReport accountSummaryReportOf: anPortfolio) equals: 'a Deposit for: 10 * pesos;a Deposit by transference for: 2 * pesos;Balance = 12 * pesos'. 
+	self assert: (summaryReportOfAnPortfolio accountSummaryReport) equals: 'a Deposit for: 10 * pesos;a Deposit by transference for: 2 * pesos;Balance = 12 * pesos'. 
 	! !
 
-!AccountReportTest methodsFor: 'Portfolio report test' stamp: 'Vic 6/15/2022 16:08:53'!
+!AccountReportTest methodsFor: 'Portfolio report test' stamp: 'Vic 6/16/2022 13:10:33'!
 test04AnInstanceOfAccountReportCanGiveTheTransferNetOfAPortfolio
 
-	| destinationAccount originAccount |
-	
-	originAccount := ReceptiveAccount new.
 	Deposit register: 100 * peso on: originAccount.
-	
-	destinationAccount := ReceptiveAccount new.
 	Deposit register: 100 * peso on: destinationAccount.
-	
 	Transfer amount: 50 * peso from: originAccount to: destinationAccount.
 	
 	anPortfolio add: destinationAccount. 
 	
-	self assert: (accountReport transferNetReportOf: anPortfolio) equals: 50*peso.! !
+	self assert: (transferNetOfAnPortfolio accountTransferNetReport) equals: 50*peso.! !
 
 
-!AccountReportTest methodsFor: 'Receptive account report' stamp: 'Vic 6/15/2022 15:58:22'!
+!AccountReportTest methodsFor: 'Receptive account report' stamp: 'Vic 6/16/2022 12:56:41'!
 test01AnInstanceOfAccountReprtCanGiveTheAccountSummaryOfAnEmptyAccount
 	
-	self assert: (accountReport accountSummaryReportOf: anAccount) equals: 'Balance = 0 * pesos'.! !
+	self assert: (summaryReportOfanAccount accountSummaryReport) equals: 'Balance = 0 * pesos'.! !
 
-!AccountReportTest methodsFor: 'Receptive account report' stamp: 'Vic 6/15/2022 15:57:03'!
+!AccountReportTest methodsFor: 'Receptive account report' stamp: 'Vic 6/16/2022 12:57:42'!
 test02AnInstanceOfAccountReportCanGiveTheAccountSummaryOfAnAccounttWithADeposit
 
 	Deposit register: 100 * peso on: anAccount.
 	
-	self assert: (accountReport accountSummaryReportOf: anAccount) equals: 'a Deposit for: 100 * pesos;Balance = 100 * pesos'.
+	self assert: (summaryReportOfanAccount accountSummaryReport) equals: 'a Deposit for: 100 * pesos;Balance = 100 * pesos'.
 ! !
 
-!AccountReportTest methodsFor: 'Receptive account report' stamp: 'Vic 6/15/2022 15:55:33'!
+!AccountReportTest methodsFor: 'Receptive account report' stamp: 'Vic 6/16/2022 12:58:29'!
 test03AnInstanceOfAccountReportCanGiveTheAccountSummaryOfAnAccountWithDepositsAndWithdraws
-		
+			
 	Deposit register: 100 * peso on: anAccount.
 	Deposit register: 600 * peso on: anAccount.
 	Withdraw register: 100 * peso on: anAccount.
-	
-	self assert: (accountReport accountSummaryReportOf: anAccount) equals: 'a Deposit for: 100 * pesos;a Deposit for: 600 * pesos;a Withdraw for: 100 * pesos;Balance = 600 * pesos'. 
+		
+	self assert: (summaryReportOfanAccount accountSummaryReport) equals: 'a Deposit for: 100 * pesos;a Deposit for: 600 * pesos;a Withdraw for: 100 * pesos;Balance = 600 * pesos'. 
 	 ! !
 
-!AccountReportTest methodsFor: 'Receptive account report' stamp: 'Vic 6/15/2022 15:54:09'!
+!AccountReportTest methodsFor: 'Receptive account report' stamp: 'Vic 6/16/2022 13:10:06'!
 test04AnInstanceOfAccountReportCanGiveTheAccountSummaryOfAnAccountWithTransferences
-	
-	| destinationAccount originAccount |
-	
-	originAccount := ReceptiveAccount new.
+
 	Deposit register: 10 * peso on: originAccount.
-	
-	destinationAccount := ReceptiveAccount new.
 	Deposit register: 10 * peso on: destinationAccount.
-	
 	Transfer amount: 2 * peso from: originAccount to: destinationAccount.
 	
-	self assert: (accountReport accountSummaryReportOf: destinationAccount) equals: 'a Deposit for: 10 * pesos;a Deposit by transference for: 2 * pesos;Balance = 12 * pesos'. ! !
+	self assert: (summaryReportOfDestinationAccount accountSummaryReport) equals: 'a Deposit for: 10 * pesos;a Deposit by transference for: 2 * pesos;Balance = 12 * pesos'. ! !
 
-!AccountReportTest methodsFor: 'Receptive account report' stamp: 'Vic 6/15/2022 15:53:51'!
+!AccountReportTest methodsFor: 'Receptive account report' stamp: 'Vic 6/16/2022 13:10:25'!
 test05AInstanceOfAccountReportCanGiveTheTransferNetOfAnAccount
 
-	| destinationAccount originAccount |
-	
-	originAccount := ReceptiveAccount new.
 	Deposit register: 100 * peso on: originAccount.
-	
-	destinationAccount := ReceptiveAccount new.
-	Deposit register: 100 * peso on: destinationAccount.
-	
+	Deposit register: 100 * peso on: destinationAccount.	
 	Transfer amount: 50 * peso from: originAccount to: destinationAccount.
 	
-	self assert: (accountReport transferNetReportOf: destinationAccount) equals: 50*peso.! !
+	self assert: (transferNetOfDestinationAccount accountTransferNetReport ) equals: 50*peso.! !
 
 
-!AccountReportTest methodsFor: 'SetUp' stamp: 'Vic 6/15/2022 13:12:37'!
+!AccountReportTest methodsFor: 'SetUp' stamp: 'Vic 6/16/2022 13:10:55'!
 setUp
 	
 	anAccount := ReceptiveAccount new.
+	originAccount := ReceptiveAccount new. 
+	destinationAccount := ReceptiveAccount new.
+	 
 	anPortfolio := Portfolio new.
-	accountReport := AccountReport new.! !
+	
+	summaryReportOfAnPortfolio := AccountSummaryReport createSummaryReportOf: anPortfolio.
+	summaryReportOfanAccount := AccountSummaryReport createSummaryReportOf: anAccount.
+	summaryReportOfDestinationAccount := AccountSummaryReport  createSummaryReportOf: destinationAccount. 
+	
+	transferNetOfAnPortfolio := AccountTransferNetReport createTransferNetReportOf: anPortfolio.
+	transferNetOfAnAccount := AccountTransferNetReport createTransferNetReportOf: anAccount.
+	transferNetOfDestinationAccount := AccountTransferNetReport  createTransferNetReportOf: destinationAccount. 
+	 
+	! !
 
 
 !classDefinition: #PortfolioTest category: 'ServiciosFinancieros-Solucion'!
@@ -761,57 +750,36 @@ isComposedBy: anAccount
 	^self = anAccount ! !
 
 
-!classDefinition: #AccountReport category: 'ServiciosFinancieros-Solucion'!
-Object subclass: #AccountReport
-	instanceVariableNames: 'accountSumaryReport transferNetReport'
+!classDefinition: #AccountSummaryReport category: 'ServiciosFinancieros-Solucion'!
+Object subclass: #AccountSummaryReport
+	instanceVariableNames: 'accountSumaryReport account'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'ServiciosFinancieros-Solucion'!
 
-!AccountReport methodsFor: 'Main protocol' stamp: 'Vic 6/15/2022 16:03:15'!
-accountSummaryReportOf: anAccount
+!AccountSummaryReport methodsFor: 'Main protocol' stamp: 'Vic 6/16/2022 12:55:45'!
+accountSummaryReport
 	
 	self resetAccountAbstract. 
 		 
-	anAccount transactions do: [:anAccountTransaction|
+	account transactions do: [:anAccountTransaction|
 		self addTransactionsToAccountSummaryReport: anAccountTransaction.
 		self addSeparatorToAccountSummaryReport.
 		].
 	
-	self addBalanceToAccountSummaryReport: anAccount balance. 
+	self addBalanceToAccountSummaryReport: account balance. 
 	
 	^accountSumaryReport copy.! !
 
-!AccountReport methodsFor: 'Main protocol' stamp: 'Vic 6/15/2022 16:04:22'!
-transferNetReportOf: anAccount
 
-	self resetTransferNetReport. 
-	
-	anAccount transactions do: [:anAccountTrasancation|
-		
-		(anAccountTrasancation class = TransferDepositLeg) ifTrue: 
-			[transferNetReport := transferNetReport + (anAccountTrasancation value)].
-		(anAccountTrasancation  class = TransferWithdrawLeg) ifTrue: 
-			[transferNetReport := transferNetReport - (anAccountTrasancation  value)].
-	
-		].
-	
-	^transferNetReport copy.! !
-
-
-!AccountReport methodsFor: 'Reset' stamp: 'Vic 6/15/2022 16:04:03'!
+!AccountSummaryReport methodsFor: 'Reset' stamp: 'Vic 6/15/2022 16:04:03'!
 resetAccountAbstract
 
 	accountSumaryReport := ''. 
 	! !
 
-!AccountReport methodsFor: 'Reset' stamp: 'Vic 6/15/2022 16:04:08'!
-resetTransferNetReport
-	
-	transferNetReport := 0*peso. ! !
 
-
-!AccountReport methodsFor: 'Message creator' stamp: 'Vic 6/15/2022 16:02:25'!
+!AccountSummaryReport methodsFor: 'Message creator' stamp: 'Vic 6/15/2022 16:02:25'!
 addBalanceToAccountSummaryReport: anAccountBalance
 
 	accountSumaryReport  := accountSumaryReport  append: 'Balance = '.
@@ -819,18 +787,18 @@ addBalanceToAccountSummaryReport: anAccountBalance
 	(anAccountBalance = 0) ifTrue:[(accountSumaryReport  := accountSumaryReport append: '0 * pesos')].
 	(anAccountBalance > 0) ifTrue: [accountSumaryReport := accountSumaryReport append: (anAccountBalance asString)].! !
 
-!AccountReport methodsFor: 'Message creator' stamp: 'Vic 6/15/2022 16:02:40'!
+!AccountSummaryReport methodsFor: 'Message creator' stamp: 'Vic 6/15/2022 16:02:40'!
 addSeparatorToAccountSummaryReport
 	
 	accountSumaryReport := accountSumaryReport append: ';'.! !
 
-!AccountReport methodsFor: 'Message creator' stamp: 'Vic 6/15/2022 16:02:54'!
+!AccountSummaryReport methodsFor: 'Message creator' stamp: 'Vic 6/15/2022 16:02:54'!
 addTransactionValueToAccountSummaryReport: anAccountTransaction
 	
 	accountSumaryReport := accountSumaryReport append: ' for: '.
 	accountSumaryReport := accountSumaryReport append: anAccountTransaction value asString.! !
 
-!AccountReport methodsFor: 'Message creator' stamp: 'Vic 6/15/2022 16:03:15'!
+!AccountSummaryReport methodsFor: 'Message creator' stamp: 'Vic 6/15/2022 16:03:15'!
 addTransactionsToAccountSummaryReport: anAccountTransaction
 
 	(anAccountTransaction class = TransferDepositLeg) ifTrue: [
@@ -845,6 +813,24 @@ addTransactionsToAccountSummaryReport: anAccountTransaction
 	
 	self addTransactionValueToAccountSummaryReport: anAccountTransaction.
 	! !
+
+
+!AccountSummaryReport methodsFor: 'initialize' stamp: 'Vic 6/16/2022 12:47:06'!
+initializeWith: anAccount
+
+	account := anAccount 
+! !
+
+"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
+
+!classDefinition: 'AccountSummaryReport class' category: 'ServiciosFinancieros-Solucion'!
+AccountSummaryReport class
+	instanceVariableNames: ''!
+
+!AccountSummaryReport class methodsFor: 'as yet unclassified' stamp: 'Vic 6/16/2022 12:22:11'!
+createSummaryReportOf: anAccount
+	
+	^(self new) initializeWith: anAccount. ! !
 
 
 !classDefinition: #AccountTransaction category: 'ServiciosFinancieros-Solucion'!
@@ -1031,6 +1017,55 @@ register: aValue on: account
 	account register: transaction.
 		
 	^ transaction! !
+
+
+!classDefinition: #AccountTransferNetReport category: 'ServiciosFinancieros-Solucion'!
+Object subclass: #AccountTransferNetReport
+	instanceVariableNames: 'transferNetReport account'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'ServiciosFinancieros-Solucion'!
+
+!AccountTransferNetReport methodsFor: 'Reset' stamp: 'Vic 6/16/2022 12:05:46'!
+resetTransferNetReport
+	
+	transferNetReport := 0*peso.! !
+
+
+!AccountTransferNetReport methodsFor: 'Main protocol' stamp: 'Vic 6/16/2022 12:56:16'!
+accountTransferNetReport
+
+	self resetTransferNetReport. 
+	
+	account transactions do: [:anAccountTrasancation|
+		
+		(anAccountTrasancation class = TransferDepositLeg) ifTrue: 
+			[transferNetReport := transferNetReport + (anAccountTrasancation value)].
+		(anAccountTrasancation  class = TransferWithdrawLeg) ifTrue: 
+			[transferNetReport := transferNetReport - (anAccountTrasancation  value)].
+	
+		].
+	
+	^transferNetReport copy.! !
+
+
+!AccountTransferNetReport methodsFor: 'Initialize' stamp: 'Vic 6/16/2022 12:40:20'!
+initializeWith: anAccount
+	
+	account := anAccount. 
+	! !
+
+"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
+
+!classDefinition: 'AccountTransferNetReport class' category: 'ServiciosFinancieros-Solucion'!
+AccountTransferNetReport class
+	instanceVariableNames: ''!
+
+!AccountTransferNetReport class methodsFor: 'Main protocol' stamp: 'Vic 6/16/2022 12:40:42'!
+createTransferNetReportOf: anAccount
+	
+	^(self new) initializeWith: anAccount. 
+! !
 
 
 !classDefinition: #Transfer category: 'ServiciosFinancieros-Solucion'!
